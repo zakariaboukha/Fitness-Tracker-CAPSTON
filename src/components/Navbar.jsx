@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logoimage from '../assets/images/logo.png';
+import Avatar from '@mui/material/Avatar';
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState(null);
@@ -33,8 +34,8 @@ const Navbar = () => {
             <div className="flex space-x-4">
               <NavLink to="/dashboard" label="Dashboard" activeLink={activeLink} onClick={handleLinkClick} />
               <NavLink to="/workouts" label="Workouts" activeLink={activeLink} onClick={handleLinkClick} />
-              <NavLink to="/projects" label="Projects" activeLink={activeLink} onClick={handleLinkClick} />
-              <NavLink to="/calendar" label="Calendar" activeLink={activeLink} onClick={handleLinkClick} />
+              <NavLink to="/home" label="Home" activeLink={activeLink} onClick={handleLinkClick} />
+              {/* <NavLink to="/calendar" label="Calendar" activeLink={activeLink} onClick={handleLinkClick} /> */}
             </div>
           </div>
 
@@ -48,11 +49,12 @@ const Navbar = () => {
               >
                 <span className="absolute -inset-1.5"></span>
                 <span className="sr-only">Open user menu</span>
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
-                />
+                <Avatar
+    alt="User avatar"
+    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+    sx={{ width: 32, height: 32 }} // Adjust size if necessary
+  />
+                
               </button>
             </div>
             {isProfileMenuOpen && (
@@ -60,6 +62,10 @@ const Navbar = () => {
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700">Your Profile</a>
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700">Settings</a>
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700">Sign out</a>
+               
+                
+                
+
               </div>
             )}
           </div>
@@ -90,10 +96,12 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <div className={`sm:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
         <div className="space-y-1 px-2 pb-3 pt-2">
+          
           <NavLink to="/dashboard" label="Dashboard" activeLink={activeLink} onClick={handleLinkClick} mobile />
           <NavLink to="/workouts" label="Workouts" activeLink={activeLink} onClick={handleLinkClick} mobile />
-          <NavLink to="/projects" label="Projects" activeLink={activeLink} onClick={handleLinkClick} mobile />
-          <NavLink to="/calendar" label="Calendar" activeLink={activeLink} onClick={handleLinkClick} mobile />
+          <NavLink to="/home" label="Home" activeLink={activeLink} onClick={handleLinkClick} />
+          
+          {/* <NavLink to="/calendar" label="Calendar" activeLink={activeLink} onClick={handleLinkClick} mobile /> */}
         </div>
       </div>
     </nav>
