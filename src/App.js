@@ -2,8 +2,9 @@ import { ThemeProvider, styled } from "styled-components";
 import { lightTheme } from "./utils/Themes";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Authentication from "./components/pages/Authentication";
-import Dashboard from "./components/pages/Dashboard";  // Importing the Dashboard component
-import Workouts from "./components/pages/Workouts";  // Importing the Workouts component
+import Dashboard from "./components/pages/Dashboard"; // Importing the Dashboard component
+import Workouts from "./components/pages/Workouts"; // Importing the Workouts component
+import Home from "./components/pages/Home"; // Importing the ExerciseDetail component
 
 const Container = styled.div`
   width: 100%;
@@ -25,7 +26,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Authentication />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/workouts" element={<Workouts />} />  {/* Adding Workouts route */}
+            <Route path="/workouts" element={<Workouts />} />
+            <Route path="/home" element={<Home />} /> {/* Adding ExerciseDetail route */}
           </Routes>
         </Container>
       </BrowserRouter>
