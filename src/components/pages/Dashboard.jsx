@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Navbar from "../Navbar";
-import Authimage from "../../utils/images/Authimage1.jpeg"; // Importing the background image
+import Authimage from "../../utils/images/Authimage1.jpeg";
 import { counts } from "../../utils/data";
 import CountsCard from "../cards/CountsCard";
 import WeeklyStatCard from "../cards/WeeklyStatCard";
 import CategoryChart from "../cards/CategoryChart";
-import AddWorkout from "../AddWorkout"; // Importing AddWorkout component
-
+import AddWorkout from "../AddWorkout";
 import WorkoutCard from "../cards/WorkoutCard";
+import { fetchData } from "../../utils/fetchData"; // Assuming fetchData is correctly set up
 
 // New BlankDivider component for spacing
 const BlankDivider = styled.div`
@@ -16,7 +16,6 @@ const BlankDivider = styled.div`
   height: 20px; /* Adjust height as needed */
 `;
 
-// BlankDivider for bottom spacing
 const BottomBlankDivider = styled.div`
   width: 100%;
   height: 20px; /* Adjust height as needed */
@@ -69,30 +68,60 @@ const ChartContainer = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 50px;
-  flex-wrap: wrap; /* Ensures wrapping if the screen size is too small */
+  flex-wrap: wrap;
 
   @media (max-width: 700px) {
-    flex-direction: column; /* Stacks the charts on smaller screens */
+    flex-direction: column;
     align-items: center;
   }
 `;
 
-const Siction = styled.div``
-const CardWrapper = styled.div``
+const Siction = styled.div``;
+const CardWrapper = styled.div``;
 
 const Dashboard = () => {
   const [workout, setWorkout] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [todaysWorkouts, setTodaysWorkouts] = useState([]);
 
-  const handleAddNewWorkout = () => {
-    // Add your logic to handle the new workout here
-    console.log("New workout added:", workout);
-    setButtonLoading(true);
-    // Simulate a delay
-    setTimeout(() => {
-      setButtonLoading(false);
-    }, 2000);
+  // Fetch today's workouts
+  const fetchWorkouts = async () => {
+    try {
+      const response = await fetchData("/api/get-todays-workouts", { method: "GET" });
+      setTodaysWorkouts(response.workouts || []); // Update with API response
+    } catch (error) {
+      console.error("Error fetching workouts:", error);
+    }
   };
+
+  // Add a new workout
+  const handleAddNewWorkout = async () => {
+    if (!workout.trim()) {
+      alert("Workout details cannot be empty!");
+      return;
+    }
+
+    setButtonLoading(true);
+    try {
+      const response = await fetchData("/api/add-workout", {
+        method: "POST",
+        body: JSON.stringify({ details: workout }),
+      });
+      console.log("Workout added successfully:", response);
+      setWorkout("");
+      fetchWorkouts(); // Refresh today's workouts
+    } catch (error) {
+      console.error("Error adding workout:", error);
+      alert("Failed to add workout. Please try again.");
+    } finally {
+      setButtonLoading(false);
+    }
+  };
+
+  // Fetch workouts on component mount
+  useEffect(() => {
+    fetchWorkouts();
+  }, []);
 
   const data = {
     totalCaloriesBurnt: 13500,
@@ -122,7 +151,6 @@ const Dashboard = () => {
             ))}
           </Flexwrap>
 
-          {/* Adding BlankDivider between sections */}
           <BlankDivider />
 
           <ChartContainer>
@@ -136,19 +164,23 @@ const Dashboard = () => {
             />
           </ChartContainer>
 
-          {/* Adding BlankDivider below the content */}
           <BottomBlankDivider />
           <Siction>
-            <Title>todays Workouts</Title>
+            <Title>Today's Workouts</Title>
             <CardWrapper>
-            
+              {todaysWorkouts.length > 0 ? (
+                todaysWorkouts.map((workout, index) => (
+                  <WorkoutCard key={index} workout={workout} />
+                ))
+              ) : (
+                <p>No workouts added for today yet!</p>
+              )}
               <WorkoutCard />
-  
-          </CardWrapper>
+              <BottomBlankDivider />
+              <BottomBlankDivider />
+              <BottomBlankDivider />
+            </CardWrapper>
           </Siction>
-          <BottomBlankDivider />
-          <BottomBlankDivider />
-          <BottomBlankDivider />
           <BottomBlankDivider />
         </Wrapper>
       </Container>
