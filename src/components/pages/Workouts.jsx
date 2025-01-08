@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Navbar from "../Navbar"; // Importing the Navbar component
+import Navbar from "../Navbar";
 import Authimage from "../../utils/images/Authimage2.jpeg";
 import { DateCalendar, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import WorkoutCard from "../cards/WorkoutCard";
+import { fetchData } from "../../utils/fetchData"; // Assuming fetchData is correctly set up
 
 const Container = styled.div`
   flex: 1;
@@ -89,10 +90,6 @@ const Right = styled(GlassContainer)`
   flex: 1;
   backdrop-filter: blur(10px);
   height: fit-content;
-  @media (max-width: 600px) {
-    ;
-  }
-
 `;
 
 const Section = styled.div`
@@ -135,6 +132,26 @@ const CardWrapper = styled.div`
 `;
 
 const Workouts = () => {
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [workouts, setWorkouts] = useState([]);
+  
+  // Fetch workouts based on the selected date
+  const fetchWorkouts = async (date) => {
+    try {
+      const response = await fetchData(`/api/get-workouts?date=${date}`, { method: "GET" });
+      setWorkouts(response.workouts || []); // Assuming response contains workouts for that date
+    } catch (error) {
+      console.error("Error fetching workouts:", error);
+    }
+  };
+
+  // Handle date change from the calendar
+  const handleDateChange = (newDate) => {
+    const formattedDate = newDate.format("YYYY-MM-DD"); // Assuming the API accepts this format
+    setSelectedDate(formattedDate);
+    fetchWorkouts(formattedDate);
+  };
+
   return (
     <>
       <Navbar />
@@ -143,30 +160,31 @@ const Workouts = () => {
           <Left>
             <Title>Select Date</Title>
             <CalendarWrapper>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-  <DateCalendar 
-    sx={{
-      width: '195px', // Default size for small screens
-      height: '300px', // Default height for small screens
-      '@media (min-width: 600px)': {
-        width: '300px', // Larger size for tablet
-        height: '400px', // Adjust height for tablet
-      },
-      '@media (min-width: 1024px)': {
-        width: '400px', // Larger size for desktop
-        height: '500px', // Adjust height for desktop
-      },
-    }} 
-  />
-</LocalizationProvider>
-
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateCalendar
+                  sx={{
+                    width: '195px', 
+                    height: '300px', 
+                    '@media (min-width: 600px)': { width: '300px', height: '400px' },
+                    '@media (min-width: 1024px)': { width: '400px', height: '500px' },
+                  }}
+                  onChange={handleDateChange} // Set the selected date
+                />
+              </LocalizationProvider>
             </CalendarWrapper>
           </Left>
           <Right>
             <Section>
               <SecTiltle>Today's Workout</SecTiltle>
               <CardWrapper>
-                <WorkoutCard />
+              <WorkoutCard />
+                {workouts.length > 0 ? (
+                  workouts.map((workout, index) => (
+                    <WorkoutCard key={index} workout={workout} />
+                  ))
+                ) : (
+                  <p>No workouts available for this date.</p>
+                )}
               </CardWrapper>
             </Section>
           </Right>
