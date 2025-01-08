@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import logoimage from '../../utils/images/logo.png';
 import Authimage from '../../utils/images/Authimage.jpeg';
 
+
 // Styled components
 const Container = styled.div`
   display: flex;
